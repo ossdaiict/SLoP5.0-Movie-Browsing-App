@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../widgets/movie_card.dart';
+import 'SearchScreen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -39,7 +40,9 @@ class HomeScreen extends StatelessWidget {
         actions: [
           IconButton(
             icon: Icon(Icons.search),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => SearchScreen()));
+            },
           ),
         ],
       ),
