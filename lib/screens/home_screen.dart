@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../widgets/movie_card.dart';
+import 'search_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -22,6 +23,7 @@ class HomeScreen extends StatelessWidget {
           SizedBox(
             height: 150,
             child: ListView.separated(
+
               scrollDirection: Axis.horizontal,
               padding: EdgeInsets.symmetric(horizontal: 8),
               itemCount: items.length,
@@ -39,7 +41,9 @@ class HomeScreen extends StatelessWidget {
         actions: [
           IconButton(
             icon: Icon(Icons.search),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => SearchScreen()));
+            },
           ),
         ],
       ),
