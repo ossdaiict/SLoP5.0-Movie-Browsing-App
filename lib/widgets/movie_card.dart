@@ -9,12 +9,12 @@ class MovieCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: 100,
-      color: Colors.grey[300],
+      color: Theme.of(context).colorScheme.surface,
       child: Center(
           child: Text(
-        title,
-        textAlign: TextAlign.center,
-      )),
+            title,
+            textAlign: TextAlign.center,
+          )),
     );
   }
 }
