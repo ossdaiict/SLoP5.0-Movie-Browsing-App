@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "473487710445",
+    "project_id": "slop-movie-app-2025",
+    "storage_bucket": "slop-movie-app-2025.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:473487710445:android:c2c913e8898c4ff2df94e4",
+        "android_client_info": {
+          "package_name": "com.example.movie_browsing_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCR8OCicW1ddedgymVFgqDG3JD5hIeUx4A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
