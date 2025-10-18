@@ -4,7 +4,7 @@ import '../models/movie.dart';
 
 class FavouritesService {
   final _firestore = FirebaseFirestore.instance;
-  final _user = FirebaseAuth.instance.currentUser;
+  User? get _user => FirebaseAuth.instance.currentUser;
 
 
   Future<void> addToFavourites(Movie movie) async {
