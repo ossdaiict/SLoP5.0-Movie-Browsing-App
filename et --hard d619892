@@ -1,0 +1,35 @@
+[33m2e643a3[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mfeature2[m[33m)[m HEAD@{0}: rebase (finish): returning to refs/heads/feature2
+[33m2e643a3[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mfeature2[m[33m)[m HEAD@{1}: rebase (continue): Add : Modified the favourite_service.dart File
+[33mceb2d45[m HEAD@{2}: rebase (pick): Feat : Implemented search functionality with API integration and error handling
+[33mba2beee[m HEAD@{3}: rebase (continue): feature : implemented Firebase auth (login, signup, logout) and user favorites
+[33ma827391[m[33m ([m[1;31mupstream/main[m[33m, [m[1;31mupstream/HEAD[m[33m)[m HEAD@{4}: rebase (start): checkout upstream/main
+[33md619892[m[33m ([m[1;31morigin/feature2[m[33m)[m HEAD@{5}: checkout: moving from feature2 to feature2
+[33md619892[m[33m ([m[1;31morigin/feature2[m[33m)[m HEAD@{6}: rebase (abort): returning to refs/heads/feature2
+[33m17e99e5[m HEAD@{7}: rebase (pick): Feat : Implemented search functionality with API integration and error handling
+[33mb0816fc[m HEAD@{8}: rebase (continue): feature : implemented Firebase auth (login, signup, logout) and user favorites
+[33ma827391[m[33m ([m[1;31mupstream/main[m[33m, [m[1;31mupstream/HEAD[m[33m)[m HEAD@{9}: rebase (start): checkout upstream/main
+[33md619892[m[33m ([m[1;31morigin/feature2[m[33m)[m HEAD@{10}: checkout: moving from feature2 to feature2
+[33md619892[m[33m ([m[1;31morigin/feature2[m[33m)[m HEAD@{11}: rebase (abort): returning to refs/heads/feature2
+[33m851c76a[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m HEAD@{12}: rebase (start): checkout upstream/main
+[33md619892[m[33m ([m[1;31morigin/feature2[m[33m)[m HEAD@{13}: rebase (abort): returning to refs/heads/feature2
+[33m851c76a[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m HEAD@{14}: rebase (start): checkout upstream/main
+[33md619892[m[33m ([m[1;31morigin/feature2[m[33m)[m HEAD@{15}: commit: Add : Modified the favourite_service.dart File
+[33md12c007[m HEAD@{16}: checkout: moving from feature2 to feature2
+[33md12c007[m HEAD@{17}: rebase (abort): returning to refs/heads/feature2
+[33m1dee4af[m HEAD@{18}: rebase (start): checkout upstream/feature2
+[33md12c007[m HEAD@{19}: commit (merge): Merge remote-tracking branch 'origin/main' into feature2
+[33m1dee4af[m HEAD@{20}: commit: feature : implemented Firebase auth (login, signup, logout) and user favorites
+[33m69cdfdc[m[33m ([m[1;31morigin/feature[m[33m, [m[1;32mfeature[m[33m)[m HEAD@{21}: checkout: moving from feature to feature2
+[33m69cdfdc[m[33m ([m[1;31morigin/feature[m[33m, [m[1;32mfeature[m[33m)[m HEAD@{22}: reset: moving to HEAD
+[33m69cdfdc[m[33m ([m[1;31morigin/feature[m[33m, [m[1;32mfeature[m[33m)[m HEAD@{23}: commit: Fix:Renamed File SearchScreen.dart
+[33me3e991d[m HEAD@{24}: checkout: moving from main to feature
+[33m5ac01b2[m[33m ([m[1;32mmain[m[33m)[m HEAD@{25}: checkout: moving from 5ac01b2ab267070fe450b28d67204d5daeb88b17 to main
+[33m5ac01b2[m[33m ([m[1;32mmain[m[33m)[m HEAD@{26}: checkout: moving from main to feature2
+[33m5ac01b2[m[33m ([m[1;32mmain[m[33m)[m HEAD@{27}: checkout: moving from 5ac01b2ab267070fe450b28d67204d5daeb88b17 to main
+[33m5ac01b2[m[33m ([m[1;32mmain[m[33m)[m HEAD@{28}: checkout: moving from feature to feature2
+[33me3e991d[m HEAD@{29}: checkout: moving from feature2 to feature
+[33m5ac01b2[m[33m ([m[1;32mmain[m[33m)[m HEAD@{30}: checkout: moving from main to feature2
+[33m5ac01b2[m[33m ([m[1;32mmain[m[33m)[m HEAD@{31}: checkout: moving from feature to main
+[33me3e991d[m HEAD@{32}: commit: Add feature : SearchScreen
+[33m5ac01b2[m[33m ([m[1;32mmain[m[33m)[m HEAD@{33}: checkout: moving from main to feature
+[33m5ac01b2[m[33m ([m[1;32mmain[m[33m)[m HEAD@{34}: clone: from https://github.com/ossdaiict/SLoP5.0-Movie-Browsing-App.git

@@ -9,11 +9,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:movie_browsing_app/main.dart';
+import 'package:movie_browsing_app/theme_management/theme_enum.dart';
 
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(MovieBrowsingApp());
+    await tester.pumpWidget(MovieBrowsingApp(initialTheme: ThemeOption.system));
 
     // Verify that our counter starts at 0.
     expect(find.text('0'), findsOneWidget);
