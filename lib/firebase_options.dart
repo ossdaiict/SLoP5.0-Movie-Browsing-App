@@ -41,46 +41,49 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyDDZv1Amf7BbZ47FVllZSoj5EY9nGSvmZI',
-    appId: '1:473487710445:web:c2a491726ee9daa1df94e4',
-    messagingSenderId: '473487710445',
-    projectId: 'slop-movie-app-2025',
-    authDomain: 'slop-movie-app-2025.firebaseapp.com',
-    storageBucket: 'slop-movie-app-2025.firebasestorage.app',
+    apiKey: 'AIzaSyDvQYZvnYtrfa43wQSRgF6Fehblf_xzvos',
+    appId: '1:1040514666061:web:f1dcdc50986f84c8145604',
+    messagingSenderId: '1040514666061',
+    projectId: 'movie-browsing-app',
+    authDomain: 'movie-browsing-app.firebaseapp.com',
+    storageBucket: 'movie-browsing-app.firebasestorage.app',
+    measurementId: 'G-824WY9W1JY',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyCR8OCicW1ddedgymVFgqDG3JD5hIeUx4A',
-    appId: '1:473487710445:android:c2c913e8898c4ff2df94e4',
-    messagingSenderId: '473487710445',
-    projectId: 'slop-movie-app-2025',
-    storageBucket: 'slop-movie-app-2025.firebasestorage.app',
+    apiKey: 'AIzaSyAnrMOPBSags4rTteYyQaEwLlUias5lsDM',
+    appId: '1:1040514666061:android:fb89209c7d2699d9145604',
+    messagingSenderId: '1040514666061',
+    projectId: 'movie-browsing-app',
+    storageBucket: 'movie-browsing-app.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyD5qN8uN6PoCH_2psn4GUwuxyHQNQGbQIE',
-    appId: '1:473487710445:ios:3c96d1f0031c3205df94e4',
-    messagingSenderId: '473487710445',
-    projectId: 'slop-movie-app-2025',
-    storageBucket: 'slop-movie-app-2025.firebasestorage.app',
+    apiKey: 'AIzaSyDMP1G1lbrZ8oZ4MDUJ3tUX_rsZwOmko0M',
+    appId: '1:1040514666061:ios:d70d89a3267c6025145604',
+    messagingSenderId: '1040514666061',
+    projectId: 'movie-browsing-app',
+    storageBucket: 'movie-browsing-app.firebasestorage.app',
     iosBundleId: 'com.example.movieBrowsingApp',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyD5qN8uN6PoCH_2psn4GUwuxyHQNQGbQIE',
-    appId: '1:473487710445:ios:3c96d1f0031c3205df94e4',
-    messagingSenderId: '473487710445',
-    projectId: 'slop-movie-app-2025',
-    storageBucket: 'slop-movie-app-2025.firebasestorage.app',
+    apiKey: 'AIzaSyDMP1G1lbrZ8oZ4MDUJ3tUX_rsZwOmko0M',
+    appId: '1:1040514666061:ios:d70d89a3267c6025145604',
+    messagingSenderId: '1040514666061',
+    projectId: 'movie-browsing-app',
+    storageBucket: 'movie-browsing-app.firebasestorage.app',
     iosBundleId: 'com.example.movieBrowsingApp',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyDDZv1Amf7BbZ47FVllZSoj5EY9nGSvmZI',
-    appId: '1:473487710445:web:c455785917153e3bdf94e4',
-    messagingSenderId: '473487710445',
-    projectId: 'slop-movie-app-2025',
-    authDomain: 'slop-movie-app-2025.firebaseapp.com',
-    storageBucket: 'slop-movie-app-2025.firebasestorage.app',
+    apiKey: 'AIzaSyDvQYZvnYtrfa43wQSRgF6Fehblf_xzvos',
+    appId: '1:1040514666061:web:448452f3de2d255c145604',
+    messagingSenderId: '1040514666061',
+    projectId: 'movie-browsing-app',
+    authDomain: 'movie-browsing-app.firebaseapp.com',
+    storageBucket: 'movie-browsing-app.firebasestorage.app',
+    measurementId: 'G-SDDZ84V522',
   );
+
 }
