@@ -1,4 +1,6 @@
-#
+git add lib/screens/home_screen.dart lib/screens/search_screen.dart lib/firebase_options.dart \
+        macos/Flutter/GeneratedPluginRegistrant.swift windows/flutter/generated_plugin_registrant.cc \
+        windows/flutter/generated_plugins.cmake#
 # Generated file, do not edit.
 #
 
