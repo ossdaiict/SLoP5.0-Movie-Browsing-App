@@ -6,7 +6,7 @@ import 'package:movie_browsing_app/services/api_services.dart';
 import '../models/movie.dart';
 import '../theme_management/theme_enum.dart';
 import '../widgets/movie_card.dart';
-import 'search_screen.dart';
+import 'search_screen.dart' hide Movie;
 
 class HomeScreen extends StatefulWidget {
   final ValueChanged<ThemeOption> onThemeChange;
