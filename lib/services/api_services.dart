@@ -10,7 +10,7 @@ class ApiService {
   Future<List<Movie>> searchMovies(String query) async {
     final uri = Uri.https(
       apiHost,
-      '/', 
+      '/',
       {
         's': query,
         'r': 'json',
@@ -32,7 +32,16 @@ class ApiService {
 
       if (data['Response'] == 'True') {
         final List moviesJson = data['Search'];
-        return moviesJson.map((json) => Movie.fromJson(json)).toList();
+        List<Movie> movies=moviesJson.map((json) => Movie.fromJson(json)).toList();
+        movies = movies.where((m) {
+          final p = m.poster;
+          return p.isNotEmpty && p != "N/A" && p.startsWith("http");
+        }).toList();
+
+        //movies.shuffle(Random());
+
+        return movies;
+
       } else {
         return [];
       }
@@ -40,6 +49,26 @@ class ApiService {
       throw Exception('Failed to fetch movies');
     }
   }
+
+  Future<List<Movie>> fetchTopIndianMovies() async {
+    return searchMovies("Bollywood");
+  }
+
+  Future<List<Movie>> fetchPopularShows() async {
+    final queries = ["Friends", "Stranger Things", "Breaking", "Money Heist"];
+    queries.shuffle();
+    final randomQuery = queries.first;
+    return searchMovies(randomQuery);
+  }
+
+  Future<List<Movie>> fetchGlobalPopularMovies() async {
+    final queries = ["Avengers", "Inception", "Batman", "Jurassic"];
+    queries.shuffle();
+    final randomQuery = queries.first;
+    return searchMovies(randomQuery);
+  }
+
+
 
   Future<Movie> getMovieDetails(String imdbID) async {
   

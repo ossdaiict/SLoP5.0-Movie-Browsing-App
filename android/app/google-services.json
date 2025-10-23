@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1040514666061",
+    "project_id": "movie-browsing-app",
+    "storage_bucket": "movie-browsing-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1040514666061:android:fb89209c7d2699d9145604",
+        "android_client_info": {
+          "package_name": "com.example.movie_browsing_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAnrMOPBSags4rTteYyQaEwLlUias5lsDM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
