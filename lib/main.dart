@@ -97,10 +97,9 @@ class _MovieBrowsingAppState extends State<MovieBrowsingApp> {
         onThemeChange: setThemeOption,
         currentTheme: currentTheme,
       ),
-
-      routes: {
-        '/movie-detail': (context) => const MovieDetailScreen(),
-      },
+      // routes: {
+      //   '/movie-detail': (context) => const MovieDetailScreen(movie: ,),
+      // },
     );
   }
 }
