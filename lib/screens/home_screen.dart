@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:movie_browsing_app/screens/favourite_screen.dart';
+import 'package:movie_browsing_app/screens/movie_detail_screen.dart';
 import 'package:movie_browsing_app/screens/settings_screen.dart';
 import 'package:movie_browsing_app/services/api_services.dart';
 import '../models/movie.dart';
@@ -57,7 +58,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 itemCount: movies.length,
                 itemBuilder: (context, index) {
                   final movie = movies[index];
-                  return MovieCard(title: movie.title, movie: movie);
+                  return InkWell(
+                    onTap: () {
+                    Navigator.push(context,MaterialPageRoute(builder: (context) => MovieDetailScreen(movie: movie)));
+                    },
+                      child: MovieCard(title: movie.title, movie: movie));
                 },
               );
             },

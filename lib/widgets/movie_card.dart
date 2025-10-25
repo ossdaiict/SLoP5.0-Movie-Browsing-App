@@ -59,7 +59,6 @@ class _MovieCardState extends State<MovieCard> {
                   height: 160,
                   fit: BoxFit.cover,
                   errorBuilder: (_, __, ___) =>  Container(padding:EdgeInsets.only(top:80,right:5,bottom:41,left:5),
-
                       child: const Center(child: Icon(Icons.broken_image, size: 40))),
                 ),
               ),
@@ -73,6 +72,7 @@ class _MovieCardState extends State<MovieCard> {
               Text(
                 widget.movie.year,
                 style: const TextStyle(fontSize: 12, color: Colors.grey),
+
               ),
             ],
           ),
