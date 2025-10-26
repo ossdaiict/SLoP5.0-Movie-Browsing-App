@@ -24,6 +24,31 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+
+
+
+
+  late ApiService apiService;
+  late Future<List<Movie>> topIndianMovies;
+  late Future<List<Movie>> popularShows;
+  late Future<List<Movie>> globalPopularMovies;
+
+  void _loadData() {
+    setState(() {
+      topIndianMovies = apiService.fetchTopIndianMovies();
+      popularShows = apiService.fetchPopularShows();
+      globalPopularMovies = apiService.fetchGlobalPopularMovies();
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    apiService = ApiService();
+    _loadData();
+  }
+
+
   Widget buildSection(String title, Future<List<Movie>> items) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -62,7 +87,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     onTap: () {
                     Navigator.push(context,MaterialPageRoute(builder: (context) => MovieDetailScreen(movie: movie)));
                     },
-                      child: MovieCard(title: movie.title, movie: movie));
+                      child: MovieCard(movie: movie));
                 },
               );
             },
@@ -72,13 +97,9 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+
   @override
   Widget build(BuildContext context) {
-    final apiService = ApiService();
-    final topIndianMovies = apiService.fetchTopIndianMovies();
-    final popularShows = apiService.fetchPopularShows();
-    final globalPopularMovies = apiService.fetchGlobalPopularMovies();
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Home'),
@@ -123,12 +144,22 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      body: ListView(
-        children: [
-          buildSection('Top Indian Movies', topIndianMovies),
-          buildSection('Popular Shows', popularShows),
-          buildSection('Globally Popular Movies', globalPopularMovies),
-        ],
+      body: RefreshIndicator(
+        onRefresh: () async {
+          _loadData();
+          await Future.delayed(const Duration(seconds: 2));
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Movies refreshed')),
+          );
+        },
+        child: ListView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          children: [
+            buildSection('Top Indian Movies', topIndianMovies),
+            buildSection('Popular Shows', popularShows),
+            buildSection('Globally Popular Movies', globalPopularMovies),
+          ],
+        ),
       ),
     );
   }

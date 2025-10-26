@@ -19,13 +19,13 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  // Load environment variables
-  await dotenv.load(fileName: ".env");
 
-  // Read the persisted theme before running the app
+  await dotenv.load(fileName: ".env");
+  //print('✅ Env loaded: ${dotenv.env['TMDB_API_KEY']}');
+
+
   final initialTheme = await themeManager.getTheme();
 
-  // Pass the initial theme to the app
   runApp(MovieBrowsingApp(initialTheme: initialTheme));
 }
 
