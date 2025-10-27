@@ -3,9 +3,8 @@ import '../models/movie.dart';
 import '../services/favourites_service.dart';
 
 class MovieCard extends StatefulWidget {
-  final String title;
   final Movie movie;
-  const MovieCard({super.key, required this.title, required this.movie});
+  const MovieCard({super.key, required this.movie});
 
   @override
   State<MovieCard> createState() => _MovieCardState();
@@ -22,69 +21,72 @@ class _MovieCardState extends State<MovieCard> {
   }
 
   Future<void> _checkIfFavourite() async {
-    final exists = await favService.isFavourite(widget.movie.imdbID);
-    if (mounted) {
-      setState(() => isLiked = exists);
-    }
+    final exists = await favService.isFavourite(widget.movie.id.toString());
+    if (mounted) setState(() => isLiked = exists);
   }
 
-  Future<void> toggleFavourite(Movie movie) async {
+  Future<void> toggleFavourite() async {
     if (isLiked) {
-      await favService.removeFromFavourites(movie.imdbID);
+      await favService.removeFromFavourites(widget.movie.id.toString());
     } else {
-      await favService.addToFavourites(movie);
+      await favService.addToFavourites(widget.movie);
     }
     setState(() => isLiked = !isLiked);
   }
 
   @override
   Widget build(BuildContext context) {
-    final poster = widget.movie.poster;
-
+    final movie = widget.movie;
+    final genres = movie.genres.isNotEmpty ? movie.genres.join(', ') : 'N/A';
     return Container(
-      width: 120,
-      color: Theme.of(context).colorScheme.surface,
+      width: 130,
       margin: const EdgeInsets.symmetric(horizontal: 8),
       child: Stack(
         children: [
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(4),
                 child: Image.network(
-                  poster,
-                  width: 120,
-                  height: 160,
+                  movie.poster,
+                  height: 180,
+                  width: 130,
                   fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) =>  Container(padding:EdgeInsets.only(top:80,right:5,bottom:41,left:5),
-                      child: const Center(child: Icon(Icons.broken_image, size: 40))),
+                  errorBuilder: (_, __, ___) => const Icon(Icons.broken_image),
                 ),
               ),
               const SizedBox(height: 6),
               Text(
-                widget.movie.title,
-                maxLines: 2,
+                movie.title,
+                maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: const TextStyle(fontSize: 14),
               ),
               Text(
-                widget.movie.year,
+                movie.releaseDate.isNotEmpty
+                    ? movie.releaseDate.split('-').first
+                    : '-',
                 style: const TextStyle(fontSize: 12, color: Colors.grey),
-
               ),
+              Text(
+                movie.genres.isNotEmpty ? movie.genres.first : 'Unknown',
+                style: const TextStyle(fontSize: 12, color: Colors.grey),
+              ),
+
             ],
           ),
           Positioned(
-            right: 0,
-            top: 0,
+            right: 4,
+            top: 4,
             child: GestureDetector(
-              onTap: () => toggleFavourite(widget.movie),
+              onTap: toggleFavourite,
               child: Icon(
-                isLiked ? Icons.bookmark_added : Icons.bookmark_add_outlined,
+                isLiked
+                    ? Icons.bookmark_added
+                    : Icons.bookmark_add_outlined,
                 color: isLiked ? Colors.blueAccent : Colors.white,
-                size: 25,
+                size: 24,
               ),
             ),
           ),

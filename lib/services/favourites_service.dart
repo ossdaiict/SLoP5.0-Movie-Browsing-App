@@ -9,40 +9,42 @@ class FavouritesService {
 
   Future<void> addToFavourites(Movie movie) async {
     if (_user == null) return;
+
     final docRef = _firestore
         .collection('users')
         .doc(_user!.uid)
         .collection('favourites')
-        .doc(movie.imdbID);
+        .doc(movie.id.toString());
 
     await docRef.set({
-      'Title': movie.title,
-      'Year': movie.year,
-      'Poster': movie.poster,
-      'imdbID': movie.imdbID,
+      'id': movie.id,
+      'title': movie.title,
+      'poster': movie.poster,
+      'releaseDate': movie.releaseDate,
+      'rating': movie.rating,
       'createdAt': FieldValue.serverTimestamp(),
     });
   }
 
 
-  Future<void> removeFromFavourites(String imdbID) async {
+  Future<void> removeFromFavourites(String movieId) async {
     if (_user == null) return;
     await _firestore
         .collection('users')
         .doc(_user!.uid)
         .collection('favourites')
-        .doc(imdbID)
+        .doc(movieId)
         .delete();
   }
 
 
-  Future<bool> isFavourite(String imdbID) async {
+  Future<bool> isFavourite(String movieId) async {
     if (_user == null) return false;
     final doc = await _firestore
         .collection('users')
         .doc(_user!.uid)
         .collection('favourites')
-        .doc(imdbID)
+        .doc(movieId)
         .get();
     return doc.exists;
   }
@@ -58,10 +60,17 @@ class FavouritesService {
         .map((snapshot) => snapshot.docs.map((doc) {
       final data = doc.data();
       return Movie(
-        title: data['Title'] ?? '',
-        year: data['Year'] ?? '',
-        imdbID: data['imdbID'] ?? '',
-        poster: data['Poster'] ?? '',
+        id: data['id'] ?? 0,
+        title: data['title'] ?? '',
+        overview: '',
+        releaseDate: data['releaseDate'] ?? '',
+        poster: data['poster'] ?? '',
+        backdrop: '',
+        rating: (data['rating'] ?? 0).toDouble(),
+        genres: [],
+        runtime: 0,
+        language: '',
+        cast: [],
       );
     }).toList());
   }
