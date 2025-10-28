@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:movie_browsing_app/screens/favourite_screen.dart';
 import 'package:movie_browsing_app/screens/movie_detail_screen.dart';
+import 'package:movie_browsing_app/screens/profile_screen.dart';
 import 'package:movie_browsing_app/screens/settings_screen.dart';
 import 'package:movie_browsing_app/services/api_services.dart';
 import '../models/movie.dart';
@@ -41,11 +42,25 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  int _selectedIndex = 0;
+  late List<Widget> _tabs;
+
+
   @override
   void initState() {
     super.initState();
     apiService = ApiService();
     _loadData();
+    _tabs = [
+      HomeScreen(
+        onThemeChange: widget.onThemeChange,
+        currentTheme: widget.currentTheme,
+      ),
+      const FavouritesScreen(),
+      const ProfileScreen(),
+    ];
+
+
   }
 
 
@@ -161,6 +176,60 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
+
+
     );
   }
+}
+
+
+class MainNavigation extends StatefulWidget {
+  final ThemeOption currentTheme;
+  final ValueChanged<ThemeOption> onThemeChange;
+
+  const MainNavigation({
+    super.key,
+    required this.currentTheme,
+    required this.onThemeChange,
+  });
+
+  @override
+  State<MainNavigation> createState() => _MainNavigationState();
+}
+
+class _MainNavigationState extends State<MainNavigation> {
+  int _selectedIndex = 0;
+
+  late final List<Widget> _tabs;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabs = [
+      HomeScreen(
+        currentTheme: widget.currentTheme,
+        onThemeChange: widget.onThemeChange,
+      ),
+      const FavouritesScreen(),
+      const ProfileScreen(),
+    ];
+  }
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: _tabs[_selectedIndex],
+        bottomNavigationBar: BottomNavigationBar(
+            currentIndex: _selectedIndex,
+            onTap:(index)=>{
+              setState(() {
+                _selectedIndex = index;
+              })
+            },
+            items: const [
+              BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+              BottomNavigationBarItem(icon: Icon(Icons.favorite), label: 'Favourites'),
+              BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+            ] ));
+}
+
 }

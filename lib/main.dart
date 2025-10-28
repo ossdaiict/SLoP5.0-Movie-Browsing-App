@@ -21,7 +21,7 @@ Future<void> main() async {
 
 
   await dotenv.load(fileName: ".env");
-  //print('✅ Env loaded: ${dotenv.env['TMDB_API_KEY']}');
+  //print('Env loaded: ${dotenv.env['TMDB_API_KEY']}');
 
 
   final initialTheme = await themeManager.getTheme();
@@ -124,10 +124,7 @@ class AuthGate extends StatelessWidget {
               body: Center(child: CircularProgressIndicator()));
         }
         if (snap.hasData) {
-          return HomeScreen(
-            onThemeChange: onThemeChange,
-            currentTheme: currentTheme,
-          );
+          return MainNavigation(currentTheme: currentTheme, onThemeChange: onThemeChange);
         }
         return const LoginScreen();
       },
