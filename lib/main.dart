@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -7,6 +9,7 @@ import 'package:movie_browsing_app/screens/home_screen.dart';
 import 'package:movie_browsing_app/screens/login_screen.dart';
 import 'package:movie_browsing_app/screens/signup_screen.dart';
 import 'package:movie_browsing_app/screens/movie_detail_screen.dart';
+import 'package:movie_browsing_app/screens/verify_email_screen.dart';
 import 'package:movie_browsing_app/theme_management/theme_manager.dart';
 import 'theme_management/theme_enum.dart';
 import 'firebase_options.dart';
@@ -92,7 +95,7 @@ class _MovieBrowsingAppState extends State<MovieBrowsingApp> {
 
       themeMode: getThemeMode(_currentThemeOption),
 
-      // AuthGate decides whether to show Login or Home
+
       home: AuthGate(
         onThemeChange: setThemeOption,
         currentTheme: currentTheme,
@@ -104,7 +107,7 @@ class _MovieBrowsingAppState extends State<MovieBrowsingApp> {
   }
 }
 
-class AuthGate extends StatelessWidget {
+class AuthGate extends StatefulWidget {
   final ValueChanged<ThemeOption> onThemeChange;
   final ThemeOption currentTheme;
 
@@ -115,19 +118,72 @@ class AuthGate extends StatelessWidget {
   });
 
   @override
+  State<AuthGate> createState() => _AuthGateState();
+}
+
+class _AuthGateState extends State<AuthGate> {
+  final _auth = FirebaseAuth.instance;
+  StreamSubscription<User?>? _userSub;
+  User? _currentUser;
+  bool _checkingVerification = true;
+
+  @override
+  void initState() {
+    super.initState();
+
+
+    _userSub = _auth.idTokenChanges().listen((user) async {
+      _currentUser = user;
+      if (user != null && !user.emailVerified) {
+
+        _startVerificationChecker();
+      }
+      if (mounted) setState(() => _checkingVerification = false);
+    });
+  }
+
+  void _startVerificationChecker() {
+    Timer.periodic(const Duration(seconds: 3), (timer) async {
+      await _auth.currentUser?.reload();
+      final refreshed = _auth.currentUser;
+      if (refreshed != null && refreshed.emailVerified) {
+        timer.cancel();
+        await refreshed.getIdToken(true);
+        if (mounted) setState(() {});
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _userSub?.cancel();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return StreamBuilder<User?>(
-      stream: FirebaseAuth.instance.authStateChanges(),
-      builder: (context, snap) {
-        if (snap.connectionState == ConnectionState.waiting) {
-          return const Scaffold(
-              body: Center(child: CircularProgressIndicator()));
-        }
-        if (snap.hasData) {
-          return MainNavigation(currentTheme: currentTheme, onThemeChange: onThemeChange);
-        }
-        return const LoginScreen();
-      },
+    if (_checkingVerification) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    final user = _currentUser;
+
+    if (user == null) {
+      return const LoginScreen();
+    }
+
+    if (!user.emailVerified) {
+      return const VerifyEmailScreen();
+    }
+
+    return MainNavigation(
+      currentTheme: widget.currentTheme,
+      onThemeChange: widget.onThemeChange,
     );
   }
 }
+
+
+
