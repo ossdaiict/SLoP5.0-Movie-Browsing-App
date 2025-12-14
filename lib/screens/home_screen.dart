@@ -25,44 +25,28 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-
-
-
-
   late ApiService apiService;
   late Future<List<Movie>> topIndianMovies;
   late Future<List<Movie>> popularShows;
   late Future<List<Movie>> globalPopularMovies;
+  late Future<Movie?> movieOfTheDay;
 
   void _loadData() {
     setState(() {
+      movieOfTheDay = apiService.fetchMovieOfTheDay();
       topIndianMovies = apiService.fetchTopIndianMovies();
       popularShows = apiService.fetchPopularShows();
       globalPopularMovies = apiService.fetchGlobalPopularMovies();
     });
   }
 
-  int _selectedIndex = 0;
-  late List<Widget> _tabs;
-
-
   @override
   void initState() {
     super.initState();
     apiService = ApiService();
+    movieOfTheDay = apiService.fetchMovieOfTheDay();
     _loadData();
-    _tabs = [
-      HomeScreen(
-        onThemeChange: widget.onThemeChange,
-        currentTheme: widget.currentTheme,
-      ),
-      const FavouritesScreen(),
-      const ProfileScreen(),
-    ];
-
-
   }
-
 
   Widget buildSection(String title, Future<List<Movie>> items) {
     return Column(
@@ -88,7 +72,7 @@ class _HomeScreenState extends State<HomeScreen> {
               }
               final movies = (snapshot.data ?? []).where((movie) {
                 final p = movie.poster;
-                return p.isNotEmpty && p != "N/A" && p.startsWith("http");
+                return p.isNotEmpty && p.startsWith("http");
               }).toList();
               if (movies.isEmpty) {
                 return const Center(child: Text('No movies found'));
@@ -100,9 +84,16 @@ class _HomeScreenState extends State<HomeScreen> {
                   final movie = movies[index];
                   return InkWell(
                     onTap: () {
-                    Navigator.push(context,MaterialPageRoute(builder: (context) => MovieDetailScreen(movie: movie)));
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              MovieDetailScreen(movie: movie),
+                        ),
+                      );
                     },
-                      child: MovieCard(movie: movie));
+                    child: MovieCard(movie: movie),
+                  );
                 },
               );
             },
@@ -112,6 +103,148 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  /// 🎬 MOVIE OF THE DAY (WITH ANIMATION)
+  Widget buildMovieOfTheDay() {
+    return FutureBuilder<Movie?>(
+      future: movieOfTheDay,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const SizedBox(
+            height: 220,
+            child: Center(child: CircularProgressIndicator()),
+          );
+        }
+
+        if (!snapshot.hasData || snapshot.data == null) {
+          return const SizedBox.shrink();
+        }
+
+        final movie = snapshot.data!;
+
+        return TweenAnimationBuilder<double>(
+          tween: Tween(begin: 0.95, end: 1.0),
+          duration: const Duration(milliseconds: 600),
+          curve: Curves.easeOutCubic,
+          builder: (context, scale, child) {
+            return Transform.scale(
+              scale: scale,
+              child: AnimatedOpacity(
+                opacity: 1,
+                duration: const Duration(milliseconds: 600),
+                child: child,
+              ),
+            );
+          },
+          child: InkWell(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => MovieDetailScreen(movie: movie),
+                ),
+              );
+            },
+            child: Container(
+              height: 260,
+              margin: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                image: DecorationImage(
+                  image: NetworkImage(
+                    movie.backdrop.isNotEmpty
+                        ? movie.backdrop
+                        : movie.poster,
+                  ),
+                  fit: BoxFit.cover,
+                ),
+              ),
+              child: Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
+                  gradient: LinearGradient(
+                    begin: Alignment.bottomCenter,
+                    end: Alignment.topCenter,
+                    colors: [
+                      Colors.black.withOpacity(0.85),
+                      Colors.transparent,
+                    ],
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    const Text(
+                      '🎬 Movie of the Day',
+                      style: TextStyle(
+                        color: Colors.white70,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      movie.title,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      movie.overview,
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        color: Colors.white70,
+                        fontSize: 14,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Row(
+                      children: [
+                        const Icon(Icons.star,
+                            color: Colors.amber, size: 18),
+                        const SizedBox(width: 4),
+                        Text(
+                          movie.rating.toStringAsFixed(1),
+                          style:
+                              const TextStyle(color: Colors.white),
+                        ),
+                        const Spacer(),
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) =>
+                                    MovieDetailScreen(movie: movie),
+                              ),
+                            );
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.redAccent,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                          ),
+                          child: const Text('Watch Now'),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -124,7 +257,8 @@ class _HomeScreenState extends State<HomeScreen> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => FavouritesScreen()),
+                MaterialPageRoute(
+                    builder: (context) => FavouritesScreen()),
               );
             },
           ),
@@ -133,7 +267,8 @@ class _HomeScreenState extends State<HomeScreen> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => SearchScreen()),
+                MaterialPageRoute(
+                    builder: (context) => SearchScreen()),
               );
             },
           ),
@@ -170,66 +305,13 @@ class _HomeScreenState extends State<HomeScreen> {
         child: ListView(
           physics: const AlwaysScrollableScrollPhysics(),
           children: [
+            buildMovieOfTheDay(),
             buildSection('Top Indian Movies', topIndianMovies),
             buildSection('Popular Shows', popularShows),
             buildSection('Globally Popular Movies', globalPopularMovies),
           ],
         ),
       ),
-
-
     );
   }
-}
-
-
-class MainNavigation extends StatefulWidget {
-  final ThemeOption currentTheme;
-  final ValueChanged<ThemeOption> onThemeChange;
-
-  const MainNavigation({
-    super.key,
-    required this.currentTheme,
-    required this.onThemeChange,
-  });
-
-  @override
-  State<MainNavigation> createState() => _MainNavigationState();
-}
-
-class _MainNavigationState extends State<MainNavigation> {
-  int _selectedIndex = 0;
-
-  late final List<Widget> _tabs;
-
-  @override
-  void initState() {
-    super.initState();
-    _tabs = [
-      HomeScreen(
-        currentTheme: widget.currentTheme,
-        onThemeChange: widget.onThemeChange,
-      ),
-      const FavouritesScreen(),
-      const ProfileScreen(),
-    ];
-  }
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: _tabs[_selectedIndex],
-        bottomNavigationBar: BottomNavigationBar(
-            currentIndex: _selectedIndex,
-            onTap:(index)=>{
-              setState(() {
-                _selectedIndex = index;
-              })
-            },
-            items: const [
-              BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-              BottomNavigationBarItem(icon: Icon(Icons.favorite), label: 'Favourites'),
-              BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
-            ] ));
-}
-
 }
