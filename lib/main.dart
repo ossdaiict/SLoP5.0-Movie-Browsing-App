@@ -1,14 +1,10 @@
 import 'dart:async';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:movie_browsing_app/screens/home_screen.dart';
 import 'package:movie_browsing_app/screens/login_screen.dart';
-import 'package:movie_browsing_app/screens/signup_screen.dart';
-import 'package:movie_browsing_app/screens/movie_detail_screen.dart';
 import 'package:movie_browsing_app/screens/verify_email_screen.dart';
 import 'package:movie_browsing_app/theme_management/theme_manager.dart';
 import 'theme_management/theme_enum.dart';
@@ -178,10 +174,11 @@ class _AuthGateState extends State<AuthGate> {
       return const VerifyEmailScreen();
     }
 
-    return MainNavigation(
-      currentTheme: widget.currentTheme,
-      onThemeChange: widget.onThemeChange,
-    );
+   return HomeScreen(
+  currentTheme: widget.currentTheme,
+  onThemeChange: widget.onThemeChange,
+);
+
   }
 }
 
