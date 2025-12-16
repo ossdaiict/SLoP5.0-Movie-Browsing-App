@@ -39,7 +39,6 @@ class _SearchScreenState extends State<SearchScreen> {
   final String _apiKey = dotenv.env['OMDB_API_KEY'] ?? 'YOUR_OMDB_API_KEY_ERROR';
   final String _baseUrl = 'https://www.omdbapi.com/';
 
-
   @override
   void dispose() {
     _debounce?.cancel();
@@ -58,10 +57,7 @@ class _SearchScreenState extends State<SearchScreen> {
       return;
     }
 
-    if (_debounce?.isActive ?? false) {
-      _debounce?.cancel();
-    }
-
+    _debounce?.cancel();
     setState(() => _isLoading = true);
 
     _debounce = Timer(_debounceDuration, () {
@@ -76,12 +72,7 @@ class _SearchScreenState extends State<SearchScreen> {
     });
   }
 
-  // API Call Function
   Future<void> _fetchMovies(String query) async {
-    if (_isLoading && _debounce?.isActive == false) {
-      setState(() => _isLoading = true);
-    }
-
     final encodedQuery = Uri.encodeComponent(query);
     final url = '$_baseUrl?s=$encodedQuery&apikey=$_apiKey';
 
@@ -93,9 +84,9 @@ class _SearchScreenState extends State<SearchScreen> {
 
         if (data['Response'] == 'True') {
           final List<dynamic> results = data['Search'] ?? [];
-
           setState(() {
-            _searchResults = results.map((json) => Movie.fromJson(json)).toList();
+            _searchResults =
+                results.map((json) => Movie.fromJson(json)).toList();
             _error = null;
             _isLoading = false;
           });
@@ -108,13 +99,14 @@ class _SearchScreenState extends State<SearchScreen> {
         }
       } else {
         setState(() {
-          _error = 'Failed to load results. Status Code: ${response.statusCode}';
+          _error =
+              'Failed to load results. Status Code: ${response.statusCode}';
           _isLoading = false;
         });
       }
-    } catch (e) {
+    } catch (_) {
       setState(() {
-        _error = 'Network Error: Could not connect to the API.';
+        _error = 'Network error. Please try again later.';
         _isLoading = false;
       });
     }
@@ -128,9 +120,9 @@ class _SearchScreenState extends State<SearchScreen> {
     if (_error != null) {
       return Center(
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(16),
           child: Text(
-            'Error: $_error',
+            '⚠️ $_error',
             style: const TextStyle(color: Colors.red),
             textAlign: TextAlign.center,
           ),
@@ -138,11 +130,34 @@ class _SearchScreenState extends State<SearchScreen> {
       );
     }
 
+    /// ✅ EMPTY RESULT HANDLING (SEXY + FRIENDLY)
     if (_searchResults.isEmpty && _searchController.text.length > 2) {
       return const Center(
-        child: Text(
-          'No results found for your query.',
-          style: TextStyle(fontSize: 18, fontStyle: FontStyle.italic),
+        child: Padding(
+          padding: EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.search_off, size: 60, color: Colors.grey),
+              SizedBox(height: 12),
+              Text(
+                '🎬 No movies found',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(height: 6),
+              Text(
+                'Try another title or check your spelling ✨',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.grey,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
         ),
       );
     }
@@ -150,51 +165,54 @@ class _SearchScreenState extends State<SearchScreen> {
     if (_searchResults.isEmpty && _searchController.text.isEmpty) {
       return const Center(
         child: Text(
-          'Start typing to search for movies.',
+          '🍿 Start typing to search for movies',
           style: TextStyle(fontSize: 16),
         ),
       );
     }
 
-    // Display results in a grid
     return GridView.builder(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(8),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 3,
         childAspectRatio: 0.45,
-        crossAxisSpacing: 8.0,
-        mainAxisSpacing: 8.0,
+        crossAxisSpacing: 8,
+        mainAxisSpacing: 8,
       ),
       itemCount: _searchResults.length,
       itemBuilder: (context, index) {
         final movie = _searchResults[index];
-        final isPosterAvailable = movie.posterUrl != 'N/A';
+        final hasPoster = movie.posterUrl != 'N/A';
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Expanded(
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(8.0),
-                child: isPosterAvailable
+                borderRadius: BorderRadius.circular(8),
+                child: hasPoster
                     ? Image.network(
-                  movie.posterUrl,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) =>
-                  const Center(child: Icon(Icons.broken_image, size: 40)),
-                )
-                    : const Center(child: Icon(Icons.movie_filter, size: 60)),
+                        movie.posterUrl,
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, __, ___) =>
+                            const Icon(Icons.broken_image, size: 40),
+                      )
+                    : const Icon(Icons.movie_filter, size: 60),
               ),
             ),
             const SizedBox(height: 4),
             SizedBox(
-              height: 35, // Guarantees space for two lines of text
+              height: 35,
               child: Text(
                 movie.title,
-                textAlign: TextAlign.center,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
-                style: TextStyle(fontSize: 12, color: Theme.of(context).textTheme.bodyLarge?.color),
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 12,
+                  color:
+                      Theme.of(context).textTheme.bodyLarge?.color,
+                ),
               ),
             ),
           ],
@@ -218,12 +236,12 @@ class _SearchScreenState extends State<SearchScreen> {
             prefixIcon: const Icon(Icons.search, color: Colors.white),
             suffixIcon: _searchController.text.isNotEmpty
                 ? IconButton(
-              icon: const Icon(Icons.clear, color: Colors.white),
-              onPressed: () {
-                _searchController.clear();
-                _onSearchChanged('');
-              },
-            )
+                    icon: const Icon(Icons.clear, color: Colors.white),
+                    onPressed: () {
+                      _searchController.clear();
+                      _onSearchChanged('');
+                    },
+                  )
                 : null,
           ),
           style: const TextStyle(color: Colors.white, fontSize: 18),
