@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import '../theme_management/theme_enum.dart';
+import 'about_app_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
   final ValueChanged<ThemeOption> onThemeChange;
@@ -38,7 +39,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     setState(() {
       _selectedThemeOption = newOption;
     });
-
     widget.onThemeChange(newOption);
   }
 
@@ -46,12 +46,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget build(BuildContext context) {
     final bool isSystemDefault = _selectedThemeOption == ThemeOption.system;
     final bool isDarkModeEnabled = _selectedThemeOption == ThemeOption.dark;
-
     final bool allowsManualControl = !isSystemDefault;
 
-    final Color textColor = Theme.of(context).textTheme.bodyLarge?.color ?? Colors.white;
-    final Color subTextColor = textColor.withOpacity(0.7);
-
+    final Color textColor =
+        Theme.of(context).textTheme.bodyLarge?.color ?? Colors.white;
+    final Color subTextColor = textColor.withValues(alpha: 0.7);
 
     return Scaffold(
       appBar: AppBar(
@@ -59,72 +58,95 @@ class _SettingsScreenState extends State<SettingsScreen> {
       ),
       body: ListView(
         children: [
-          // 1. System Default Option (The Master Control)
+          // System Default Theme
           ListTile(
             title: Text(
               'Use System Default Theme',
               style: TextStyle(color: textColor, fontWeight: FontWeight.bold),
             ),
             subtitle: Text(
-              'Enables automatic syncing with your device settings and disables manual control.',
+              'Automatically sync with your device theme.',
               style: TextStyle(color: subTextColor),
             ),
             leading: Icon(Icons.settings, color: textColor),
             trailing: Switch(
               value: isSystemDefault,
-              onChanged: (bool newValue) {
-                ThemeOption newOption = newValue ? ThemeOption.system : ThemeOption.light;
-                if (!newValue) {
-                  newOption = ThemeOption.light;
-                }
-                _handleThemeChange(newOption);
+              onChanged: (value) {
+                _handleThemeChange(
+                    value ? ThemeOption.system : ThemeOption.light);
               },
             ),
             onTap: () {
-              ThemeOption newOption = isSystemDefault ? ThemeOption.light : ThemeOption.system;
-              if (isSystemDefault) {
-                newOption = ThemeOption.light;
-              }
-              _handleThemeChange(newOption);
+              _handleThemeChange(
+                  isSystemDefault ? ThemeOption.light : ThemeOption.system);
             },
-            selected: isSystemDefault,
           ),
 
           const Divider(),
 
-          // 2. Dark Mode Toggle (The Manual Control)
+          // Dark Mode
           ListTile(
             title: Text(
               'Dark Mode',
               style: TextStyle(
-                color: allowsManualControl ? textColor : Colors.grey, // Grey out when disabled
+                color: allowsManualControl ? textColor : Colors.grey,
                 fontWeight: FontWeight.bold,
               ),
             ),
             subtitle: Text(
               allowsManualControl
-                  ? 'Toggle to override the default theme.'
-                  : 'Manual control is disabled. Turn off "Use System Default Theme" to enable.',
-              style: TextStyle(color: allowsManualControl ? subTextColor : Colors.grey[600]),
+                  ? 'Override the default theme.'
+                  : 'Disable system default to enable.',
+              style: TextStyle(
+                color: allowsManualControl
+                    ? subTextColor
+                    : Colors.grey[600],
+              ),
             ),
             leading: Icon(
               isDarkModeEnabled ? Icons.nights_stay : Icons.wb_sunny,
               color: allowsManualControl ? textColor : Colors.grey,
             ),
-            enabled: allowsManualControl,
-
             trailing: Switch(
               value: isDarkModeEnabled,
-              onChanged: allowsManualControl ? (bool newValue) {
-                ThemeOption newOption = newValue ? ThemeOption.dark : ThemeOption.light;
-                _handleThemeChange(newOption);
-              } : null,
+              onChanged: allowsManualControl
+                  ? (value) {
+                      _handleThemeChange(
+                          value ? ThemeOption.dark : ThemeOption.light);
+                    }
+                  : null,
             ),
+            enabled: allowsManualControl,
+            onTap: allowsManualControl
+                ? () {
+                    _handleThemeChange(isDarkModeEnabled
+                        ? ThemeOption.light
+                        : ThemeOption.dark);
+                  }
+                : null,
+          ),
 
-            onTap: allowsManualControl ? () {
-              ThemeOption newOption = isDarkModeEnabled ? ThemeOption.light : ThemeOption.dark;
-              _handleThemeChange(newOption);
-            } : null,
+          const Divider(),
+
+          // ABOUT APP
+          ListTile(
+            leading: Icon(Icons.info_outline, color: textColor),
+            title: Text(
+              'About App',
+              style: TextStyle(color: textColor, fontWeight: FontWeight.bold),
+            ),
+            subtitle: Text(
+              'App information, version, and credits',
+              style: TextStyle(color: subTextColor),
+            ),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const AboutAppScreen(),
+                ),
+              );
+            },
           ),
         ],
       ),
