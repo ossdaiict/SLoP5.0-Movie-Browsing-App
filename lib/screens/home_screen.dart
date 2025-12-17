@@ -30,6 +30,8 @@ class _HomeScreenState extends State<HomeScreen> {
   late Future<List<Movie>> globalPopularMovies;
   late Future<Movie?> movieOfTheDay;
 
+  bool isGridView = true; // Layout toggle state
+
   void _loadData() {
     setState(() {
       movieOfTheDay = apiService.fetchMovieOfTheDay();
@@ -47,57 +49,104 @@ class _HomeScreenState extends State<HomeScreen> {
     _loadData();
   }
 
+  /// 🎬 MOVIE SECTION BUILDER
   Widget buildSection(String title, Future<List<Movie>> items) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Padding(
-          padding: EdgeInsets.all(8),
-          child: Text(
-            '',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          child: Row(
+            children: [
+              Text(
+                title,
+                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              const Spacer(),
+              IconButton(
+                icon: Icon(isGridView ? Icons.view_list : Icons.grid_view),
+                onPressed: () {
+                  setState(() {
+                    isGridView = !isGridView;
+                  });
+                },
+              ),
+            ],
           ),
         ),
-        SizedBox(
-          height: 250,
-          child: FutureBuilder<List<Movie>>(
-            future: items,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
-              }
-              if (snapshot.hasError) {
-                return Center(child: Text('Error: ${snapshot.error}'));
-              }
-
-              final movies = (snapshot.data ?? [])
-                  .where((m) => m.poster.isNotEmpty && m.poster.startsWith('http'))
-                  .toList();
-
-              if (movies.isEmpty) {
-                return const Center(child: Text('No movies found'));
-              }
-
-              return ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: movies.length,
-                itemBuilder: (context, index) {
-                  final movie = movies[index];
-                  return InkWell(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => MovieDetailScreen(movie: movie),
-                        ),
-                      );
-                    },
-                    child: MovieCard(movie: movie),
-                  );
-                },
+        FutureBuilder<List<Movie>>(
+          future: items,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const SizedBox(
+                height: 250,
+                child: Center(child: CircularProgressIndicator()),
               );
-            },
-          ),
+            }
+            if (snapshot.hasError) {
+              return Center(child: Text('Error: ${snapshot.error}'));
+            }
+
+            final movies = (snapshot.data ?? [])
+                .where((m) => m.poster.isNotEmpty && m.poster.startsWith('http'))
+                .toList();
+
+            if (movies.isEmpty) {
+              return const SizedBox(height: 100, child: Center(child: Text('No movies found')));
+            }
+
+            // Animated layout switch
+            return AnimatedSwitcher(
+              duration: const Duration(milliseconds: 400),
+              child: isGridView
+                  ? GridView.builder(
+                      key: const ValueKey('gridView'),
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        mainAxisSpacing: 12,
+                        crossAxisSpacing: 12,
+                        childAspectRatio: 0.65,
+                      ),
+                      itemCount: movies.length,
+                      itemBuilder: (context, index) {
+                        final movie = movies[index];
+                        return InkWell(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (_) => MovieDetailScreen(movie: movie)),
+                            );
+                          },
+                          child: MovieCard(movie: movie),
+                        );
+                      },
+                    )
+                  : SizedBox(
+                      key: const ValueKey('listView'),
+                      height: 250,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        itemCount: movies.length,
+                        itemBuilder: (context, index) {
+                          final movie = movies[index];
+                          return InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (_) => MovieDetailScreen(movie: movie)),
+                              );
+                            },
+                            child: MovieCard(movie: movie),
+                          );
+                        },
+                      ),
+                    ),
+            );
+          },
         ),
       ],
     );
@@ -139,9 +188,7 @@ class _HomeScreenState extends State<HomeScreen> {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(
-                  builder: (_) => MovieDetailScreen(movie: movie),
-                ),
+                MaterialPageRoute(builder: (_) => MovieDetailScreen(movie: movie)),
               );
             },
             child: Container(
@@ -149,11 +196,16 @@ class _HomeScreenState extends State<HomeScreen> {
               margin: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black26,
+                    blurRadius: 8,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
                 image: DecorationImage(
                   image: NetworkImage(
-                    movie.backdrop.isNotEmpty
-                        ? movie.backdrop
-                        : movie.poster,
+                    movie.backdrop.isNotEmpty ? movie.backdrop : movie.poster,
                   ),
                   fit: BoxFit.cover,
                 ),
@@ -166,7 +218,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     begin: Alignment.bottomCenter,
                     end: Alignment.topCenter,
                     colors: [
-                      Colors.black.withValues(alpha: 0.85),
+                      Colors.black.withOpacity(0.85),
                       Colors.transparent,
                     ],
                   ),
@@ -207,8 +259,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     const SizedBox(height: 10),
                     Row(
                       children: [
-                        const Icon(Icons.star,
-                            color: Colors.amber, size: 18),
+                        const Icon(Icons.star, color: Colors.amber, size: 18),
                         const SizedBox(width: 4),
                         Text(
                           movie.rating.toStringAsFixed(1),
@@ -219,12 +270,15 @@ class _HomeScreenState extends State<HomeScreen> {
                           onPressed: () {
                             Navigator.push(
                               context,
-                              MaterialPageRoute(
-                                builder: (_) =>
-                                    MovieDetailScreen(movie: movie),
-                              ),
+                              MaterialPageRoute(builder: (_) => MovieDetailScreen(movie: movie)),
                             );
                           },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.redAccent,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
                           child: const Text('Watch Now'),
                         ),
                       ],

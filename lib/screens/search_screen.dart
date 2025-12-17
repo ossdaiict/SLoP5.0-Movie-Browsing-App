@@ -32,6 +32,7 @@ class _SearchScreenState extends State<SearchScreen> {
   List<Movie> _searchResults = [];
   bool _isLoading = false;
   String? _error;
+  bool isGridView = true; // Toggle state
 
   Timer? _debounce;
   final Duration _debounceDuration = const Duration(milliseconds: 500);
@@ -130,7 +131,6 @@ class _SearchScreenState extends State<SearchScreen> {
       );
     }
 
-    /// ✅ EMPTY RESULT HANDLING (SEXY + FRIENDLY)
     if (_searchResults.isEmpty && _searchController.text.length > 2) {
       return const Center(
         child: Padding(
@@ -171,53 +171,98 @@ class _SearchScreenState extends State<SearchScreen> {
       );
     }
 
-    return GridView.builder(
-      padding: const EdgeInsets.all(8),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 3,
-        childAspectRatio: 0.45,
-        crossAxisSpacing: 8,
-        mainAxisSpacing: 8,
-      ),
-      itemCount: _searchResults.length,
-      itemBuilder: (context, index) {
-        final movie = _searchResults[index];
-        final hasPoster = movie.posterUrl != 'N/A';
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 400),
+      child: isGridView
+          ? GridView.builder(
+              key: const ValueKey('gridView'),
+              padding: const EdgeInsets.all(8),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+                childAspectRatio: 0.45,
+                crossAxisSpacing: 8,
+                mainAxisSpacing: 8,
+              ),
+              itemCount: _searchResults.length,
+              itemBuilder: (context, index) {
+                final movie = _searchResults[index];
+                final hasPoster = movie.posterUrl != 'N/A';
 
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Expanded(
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: hasPoster
-                    ? Image.network(
-                        movie.posterUrl,
-                        fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) =>
-                            const Icon(Icons.broken_image, size: 40),
-                      )
-                    : const Icon(Icons.movie_filter, size: 60),
-              ),
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Expanded(
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: hasPoster
+                            ? Image.network(
+                                movie.posterUrl,
+                                fit: BoxFit.cover,
+                                errorBuilder: (_, __, ___) =>
+                                    const Icon(Icons.broken_image, size: 40),
+                              )
+                            : const Icon(Icons.movie_filter, size: 60),
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    SizedBox(
+                      height: 35,
+                      child: Text(
+                        movie.title,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Theme.of(context).textTheme.bodyLarge?.color,
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              },
+            )
+          : ListView.builder(
+              key: const ValueKey('listView'),
+              padding: const EdgeInsets.all(8),
+              itemCount: _searchResults.length,
+              itemBuilder: (context, index) {
+                final movie = _searchResults[index];
+                final hasPoster = movie.posterUrl != 'N/A';
+
+                return Container(
+                  margin: const EdgeInsets.symmetric(vertical: 6),
+                  height: 140,
+                  child: Row(
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: hasPoster
+                            ? Image.network(
+                                movie.posterUrl,
+                                width: 100,
+                                height: 140,
+                                fit: BoxFit.cover,
+                                errorBuilder: (_, __, ___) =>
+                                    const Icon(Icons.broken_image, size: 40),
+                              )
+                            : const Icon(Icons.movie_filter, size: 60),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          movie.title,
+                          maxLines: 3,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
             ),
-            const SizedBox(height: 4),
-            SizedBox(
-              height: 35,
-              child: Text(
-                movie.title,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 12,
-                  color:
-                      Theme.of(context).textTheme.bodyLarge?.color,
-                ),
-              ),
-            ),
-          ],
-        );
-      },
     );
   }
 
@@ -246,6 +291,16 @@ class _SearchScreenState extends State<SearchScreen> {
           ),
           style: const TextStyle(color: Colors.white, fontSize: 18),
         ),
+        actions: [
+          IconButton(
+            icon: Icon(isGridView ? Icons.view_list : Icons.grid_view),
+            onPressed: () {
+              setState(() {
+                isGridView = !isGridView;
+              });
+            },
+          ),
+        ],
       ),
       body: _buildBody(),
     );
